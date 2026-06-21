@@ -58,6 +58,23 @@ claude mcp add nim -- python3 /path/to/nim-mcp/server.py
 Every `new_*` / `update_*` / `set_*` tool takes **`dry_run`**: `"plan"` (echo the call, no server contact) or
 `"preflight"` (resolve parents + validate the status against the live list, write nothing).
 
+## ⚠️ Not in NIM's API (UI-only — these tools can't exist)
+NIM's **production-business layer has no REST API** — each function below returns `Invalid query`, so
+`nim-mcp` deliberately does **not** wrap them (verified live against NIM 7.2.9):
+
+| Domain | Status |
+|---|---|
+| **Bids** (+ line items, templates) | ❌ UI-only — created in the Kendo bid builder |
+| **Expenses** · **Actuals** · **Invoices** | ❌ UI-only — inline-grid / derived in the UI |
+| **Crew rates / Financials** (Rate · P&W · OT · DT) | ❌ UI-only |
+| **User creation** (`addUser`) | ❌ admin-UI only (`getUsers` etc. are read-only) |
+| **Custom-Key definitions** | ⚠️ values via `updateJob&customKeys=` only persist for **pre-defined** keys |
+
+The API *does* cover the **creative pipeline** (jobs/shows/shots/assets/tasks/versions/renders/elements) plus
+**timecards · schedule · contacts · resources · exchange-rates**. The financial loop that is NIM's signature
+feature is the one part you can't automate — the design lesson behind expanding our clone to expose all of it
+as first-class tools.
+
 ## The cross-tracker contract — `project_summary`
 Identical shape to the other four servers (this is what the hub consumes):
 ```jsonc
