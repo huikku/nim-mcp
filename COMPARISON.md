@@ -6,9 +6,10 @@ These five MCP servers ([`shotgrid-mcp`](https://github.com/huikku/shotgrid-mcp)
 **same shape** so an agent can read a project from one tracker and recreate it in another. This doc compares
 the servers, shows how the platforms' data models line up, and — most importantly — lists the
 **incompatibilities you hit when migrating between them**. The three original trackers were exercised in
-**live round-trip tests** (all six directions); **AYON** and **NIM** are the newest additions — each
-verified against a live install with the MCP tested live (read + CRUD + normalized `project_summary`);
-cross-tracker migration *edges* to/from them are the natural next step.
+**live round-trip tests** (all six directions); **AYON** and **NIM** are verified against live installs too
+(read + CRUD + normalized `project_summary`). All five are confirmed to emit the **identical contract** —
+proven by pulling real `project_summary`s from each (from a 4-shot ftrack demo to a 1,200-shot Kitsu feature)
+and normalizing them into one shape with zero per-tracker special-casing.
 
 ## 1. The MCP servers
 | | shotgrid-mcp | ftrack-mcp | kitsu-mcp | ayon-mcp | nim-mcp |
@@ -116,8 +117,11 @@ configurable; the MCP maps by name → canonical):
 > **Proven (read-back) on representative *slices*:** SG ↔ Kitsu carries structure + statuses + casting +
 > thumbnails + multi-version video + notes + custom fields; ftrack carries structure + statuses + video.
 > **AYON** & **NIM**: data models verified on live installs, MCPs tested live (read + CRUD round-trip with
-> dry_run + normalized `project_summary`); their migration edges to the others are the next step. NIM is the
-> strongest **bidding/scheduling** reference for the [estimation work](https://github.com/huikku/tracker-mcp-hub).
+> dry_run + normalized `project_summary`). And the contract holds across all five at once — a single
+> contract-driven importer read real `project_summary`s from all five and absorbed them into **one schema**
+> (**5 projects · 1,562 shots · 217 assets · 10,326 tasks**), the strongest proof the normalized shape is
+> genuinely tracker-agnostic. NIM is the strongest **bidding/scheduling** reference for the
+> [estimation work](https://github.com/huikku/tracker-mcp-hub).
 
 ---
 *Part of the tracker-MCP quintet: [shotgrid-mcp](https://github.com/huikku/shotgrid-mcp) ·
